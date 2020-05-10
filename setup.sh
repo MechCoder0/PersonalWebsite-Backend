@@ -1,1 +1,1 @@
-export DATABASE_URL="postgres://postgres:Blue84paired.@localhost:5432/heroku_test"
+export DATABASE_URL="postgres://tnrtupzhzzuior:d13369c8dc70347bc99835548bd60c384dcdcb78fd550beae54187fe862b7d0f@ec2-54-88-130-244.compute-1.amazonaws.com:5432/d506lr4t0ibppe"
