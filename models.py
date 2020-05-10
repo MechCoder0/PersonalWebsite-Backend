@@ -29,7 +29,6 @@ class Person(db.Model):
   id = Column(Integer, primary_key=True)
   name = Column(String)
   catchphrase = Column(String)
-  title = Column(String)
 
   def __init__(self, name, catchphrase=""):
     self.name = name
