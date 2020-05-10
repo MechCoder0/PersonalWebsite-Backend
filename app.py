@@ -21,6 +21,10 @@ def create_app(test_config=None):
     def be_cool():
         return "Be cool, man, be coooool! You're almost a FSND grad!"
 
+    @app.route('/test')
+    def test():
+        return "this is a test"
+
     return app
 
 app = create_app()
