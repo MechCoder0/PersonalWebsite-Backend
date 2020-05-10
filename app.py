@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from models import setup_db
+from flask_migrate import Migrate
 
 def create_app(test_config=None):
 
