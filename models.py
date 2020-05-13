@@ -40,6 +40,10 @@ class Basic_Model():
         db.session.delete(self)
         db.session.commit()
 
+"""
+    This is the blog post class. Each blog contains 
+    a title, body, and author. 
+"""
 class Blog_Post(Basic_Model, db.Model):
     __tablename__ = 'blog_post'
 
@@ -52,6 +56,14 @@ class Blog_Post(Basic_Model, db.Model):
         self.author_id = author_id
         self.body = body
         self.title = title 
+    
+    def format(self):
+        return {
+            'id' : self.id,
+            'title': self.title,
+            'body': self.body,
+            'author_id': self.author_id,
+        }
 '''
 User
 Has Name and Id
@@ -62,15 +74,18 @@ class User(Basic_Model, db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    email= Column(String)
     blog_posts = db.relationship('Blog_Post', backref='user', lazy=True)
 
-    def __init__(self, name):
+    def __init__(self, name, email):
         self.name = name
+        self.email = email
 
     def format(self):
         return {
             'id': self.id,
             'name': self.name,
-            'catchphrase': self.catchphrase
+            'email':self.email,
+            'blog_posts': [blog.format() for blog in self.blog_posts]
         }
 
