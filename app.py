@@ -47,7 +47,7 @@ def create_app(test_config=None):
         users = User.query.all()
         return jsonify({
             'success': True,
-            'users': users
+            'users': [user.format() for user in users]
         })
 
     """
@@ -81,18 +81,16 @@ def create_app(test_config=None):
         })
 
     # A POST endpoint used to create new blog posts. 
-    @app.route('/blog_post', methods=['POST'])
+    @app.route('/blog_posts', methods=['POST'])
     def create_blog_post():
         body = get_body(request)
-        try:
-            title = body.get('title', None)
-            body = body.get('body', None)
-            author_id = body.get('author_id', None)
-        except:
-            abort(401)
+
+        title = body.get('title')
+        blog_body = body.get('body')
+        author_id = body.get('author_id')
 
         try:
-            new_blog_post = Blog_Post(title, body, author_id)
+            new_blog_post = Blog_Post(title, blog_body, author_id)
             new_blog_post.insert()
 
             return jsonify({
@@ -139,8 +137,8 @@ def create_app(test_config=None):
         except:
             abort(422)
     
-    #A PATCH endpoint used to update blog posts
-    @app.route('/blog_post/<int:blog_id', methods=['PATCH'])
+    # A PATCH endpoint used to update blog posts
+    @app.route('/blog_post/<int:blog_id>', methods=['PATCH'])
     def update_blog_post(blog_id):
         blog_post = Blog_Post.query.filter(Blog_Post.id == blog_id).one_or_none()
         if(blog_post is None):
@@ -198,4 +196,4 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

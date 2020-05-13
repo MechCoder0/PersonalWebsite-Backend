@@ -3,9 +3,9 @@ from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 
-database_path = os.environ['DATABASE_URL']
-
-if (database_path is None):
+try:
+    database_path = os.environ['DATABASE_URL']
+except:
     database_path = "postgres://postgres:Blue84paired.@localhost:5432/reasons_for_hope"
 
 db = SQLAlchemy()
@@ -48,8 +48,8 @@ class Blog_Post(Basic_Model, db.Model):
     __tablename__ = 'blog_post'
 
     id = Column(Integer, primary_key=True)
-    title = Column(String)
-    body = Column(String)
+    title = Column(String, nullable=False)
+    body = Column(String, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __init__(self, title, body, author_id):
@@ -73,8 +73,8 @@ class User(Basic_Model, db.Model):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    email= Column(String)
+    name = Column(String, nullable=False)
+    email= Column(String, nullable=False)
     blog_posts = db.relationship('Blog_Post', backref='user', lazy=True)
 
     def __init__(self, name, email):
