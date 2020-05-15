@@ -43,6 +43,7 @@ def create_app(test_config=None):
 
     # A GET endpoint to get all the users
     @app.route('/users', methods=['GET'])
+    @requires_auth('get:users')
     def get_all_users():
         users = User.query.all()
         return jsonify({
@@ -54,6 +55,7 @@ def create_app(test_config=None):
         A GET endpoint to get all the blogposts for a specific user. 
     """
     @app.route('/users/<int:user_id>/blog_posts', methods=['GET'])
+    @requires_auth('get:users')
     def get_all_posts_for_user(user_id):
         blog_posts = Blog_Post.query.filter(
             Blog_Post.author_id == user_id).all()
@@ -80,8 +82,9 @@ def create_app(test_config=None):
             'blog_post': blog_post.format()
         })
 
-    # A POST endpoint used to create new blog posts. 
+    # A POST endpoint used to create new blog posts.
     @app.route('/blog_posts', methods=['POST'])
+    @requires_auth('post:blog_posts')
     def create_blog_post():
         body = get_body(request)
 
@@ -102,6 +105,7 @@ def create_app(test_config=None):
 
     # A POST endpoint used to create new users. 
     @app.route('/users', methods=['POST'])
+    @requires_auth('post:users')
     def create_user():
         body = get_body(request)
         try:
@@ -122,7 +126,8 @@ def create_app(test_config=None):
             abort(422)
 
     # A DELETE endpoint used to delete blog posts
-    @app.route('/blog_post/<int:blog_id>', methods=['DELETE'])
+    @app.route('/blog_posts/<int:blog_id>', methods=['DELETE'])
+    @requires_auth('delete:blog_posts')
     def delete_blog_post(blog_id):
         blog_post = Blog_Post.query.filter(Blog_Post.id == blog_id).one_or_none()
         if(blog_post is None):
@@ -138,7 +143,8 @@ def create_app(test_config=None):
             abort(422)
     
     # A PATCH endpoint used to update blog posts
-    @app.route('/blog_post/<int:blog_id>', methods=['PATCH'])
+    @app.route('/blog_posts/<int:blog_id>', methods=['PATCH'])
+    @requires_auth('patch:blog_posts')
     def update_blog_post(blog_id):
         blog_post = Blog_Post.query.filter(Blog_Post.id == blog_id).one_or_none()
         if(blog_post is None):
