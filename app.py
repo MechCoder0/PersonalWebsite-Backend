@@ -34,7 +34,7 @@ def create_app(test_config=None):
 
     @app.route('/')
     def login():
-        return redirect('https://dev-fullstack.auth0.com/authorize?audience=blogosphear&response_type=token&client_id=MjEGRlhUDkPbQQUB6Wc39wi0iB0q4lUZ&redirect_uri=http://http://127.0.0.1:5000/home')
+        return redirect('https://dev-fullstack.auth0.com/authorize?audience=blogosphear&response_type=token&client_id=MjEGRlhUDkPbQQUB6Wc39wi0iB0q4lUZ&redirect_uri=https://reasons-for-hope.herokuapp.com/home')
 
     @app.route('/home')
     def home():
