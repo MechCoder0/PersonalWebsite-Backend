@@ -66,7 +66,7 @@ class Blog_Post(Basic_Model, db.Model):
         }
 '''
 User
-Has Name and Id
+Has Name, email, blog posts, and Id
 '''
 
 class User(Basic_Model, db.Model):

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, redirect
 from flask_cors import CORS
 from models import Blog_Post, User, setup_db, db
 from flask_migrate import Migrate
@@ -31,6 +31,14 @@ def create_app(test_config=None):
         if body is None:
             abort(400)
         return body
+
+    @app.route('/')
+    def login():
+        return redirect('https://dev-fullstack.auth0.com/authorize?audience=blogosphear&response_type=token&client_id=MjEGRlhUDkPbQQUB6Wc39wi0iB0q4lUZ&redirect_uri=http://http://127.0.0.1:5000/home')
+
+    @app.route('/home')
+    def home():
+        return 'Hello!'
 
     # A GET endpoint to get all the blog posts
     @app.route('/blog_posts', methods=['GET'])
@@ -164,7 +172,8 @@ def create_app(test_config=None):
             
             blog_post.update()
             return jsonify({
-                'success': True
+                'success': True,
+                'blog_post': blog_post.format()
             })
         except:
             abort(422)
