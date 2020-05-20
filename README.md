@@ -10,6 +10,9 @@ JWT token for Admin Role: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijd5T0R4NG
 ## Motivation 
 This project was started because of the Udacity Full Stack Nano degree program. However, I build this because I wanted to make an API which could be used as a simple way to make a blog. I am currently working on a VueJS front end to pair with this backend. 
 
+## Style Guide
+The code adhears to the Pep8 style guide
+
 ## Requirements Setup
 In order to run this locally, run 
 pip install -r requirements.txt

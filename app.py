@@ -11,19 +11,25 @@ def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
     CORS(app)
-    migrate = Migrate(app,db)
+    migrate = Migrate(app, db)
 
     '''
         The after_request decorator to set Access-Control-Allow
     '''
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
+        response.headers.add(
+            'Access-Control-Allow-Headers',
+            'Content-Type, Authorization'
+        )
+        response.headers.add(
+            'Access-Control-Allow-Methods',
+            'GET,POST,PATCH,DELETE,OPTIONS'
+        )
         return response
 
     '''
-        Gets the json body for the request. 
+        Gets the json body for the request.
         If there is no json, then it throws an error.
     '''
     def get_body(request):
@@ -34,7 +40,10 @@ def create_app(test_config=None):
 
     @app.route('/')
     def login():
-        return redirect('https://dev-fullstack.auth0.com/authorize?audience=blogosphear&response_type=token&client_id=MjEGRlhUDkPbQQUB6Wc39wi0iB0q4lUZ&redirect_uri=https://reasons-for-hope.herokuapp.com/home')
+        return redirect((
+            "https://dev-fullstack.auth0.com/authorize?audience=blogosphear&"
+            "response_type=token&client_id=MjEGRlhUDkPbQQUB6Wc39wi0iB0q4lUZ&"
+            "redirect_uri=https://reasons-for-hope.herokuapp.com/home"))
 
     @app.route('/home')
     def home():
@@ -60,7 +69,7 @@ def create_app(test_config=None):
         })
 
     """
-        A GET endpoint to get all the blogposts for a specific user. 
+        A GET endpoint to get all the blogposts for a specific user.
     """
     @app.route('/users/<int:user_id>/blogs', methods=['GET'])
     @requires_auth('get:users')
@@ -108,10 +117,11 @@ def create_app(test_config=None):
                 'success': True,
                 'created': new_blog.id,
             })
-        except:
+        except Exception as e:
+            print(e)
             abort(422)
 
-    # A POST endpoint used to create new users. 
+    # A POST endpoint used to create new users.
     @app.route('/users', methods=['POST'])
     @requires_auth('post:users')
     def create_user():
@@ -119,7 +129,8 @@ def create_app(test_config=None):
         try:
             name = body.get('name', None)
             email = body.get('email', None)
-        except:
+        except Exception as e:
+            print(e)
             abort(401)
 
         try:
@@ -130,7 +141,8 @@ def create_app(test_config=None):
                 'success': True,
                 'created': new_user.id,
             })
-        except:
+        except Exception as e:
+            print(e)
             abort(422)
 
     # A DELETE endpoint used to delete blog posts
@@ -140,16 +152,17 @@ def create_app(test_config=None):
         blog = Blog.query.filter(Blog.id == blog_id).one_or_none()
         if(blog is None):
             abort(404)
-        
+
         try:
             blog.delete()
             return jsonify({
                 'success': True,
                 'deleted': blog_id,
             })
-        except:
+        except Exception as e:
+            print(e)
             abort(422)
-    
+
     # A PATCH endpoint used to update blog posts
     @app.route('/blogs/<int:blog_id>', methods=['PATCH'])
     @requires_auth('patch:blogs')
@@ -157,28 +170,27 @@ def create_app(test_config=None):
         blog = Blog.query.filter(Blog.id == blog_id).one_or_none()
         if(blog is None):
             abort(404)
-        
+
         body = get_body(request)
 
         title = body.get('title')
         blog_body = body.get('body')
-        
+
         try:
             if(title is not None):
                 blog.title = title
-            
+
             if(blog_body is not None):
                 blog.body = blog_body
-            
+
             blog.update()
             return jsonify({
                 'success': True,
                 'blog': blog.format()
             })
-        except:
+        except Exception as e:
+            print(e)
             abort(422)
-        
-    
 
     @app.errorhandler(400)
     def bad_request(error):
