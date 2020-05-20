@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, abort, jsonify, redirect
 from flask_cors import CORS
-from models import Blog_Post, User, setup_db, db
+from models import Blog, User, setup_db, db
 from flask_migrate import Migrate
 from auth import AuthError, requires_auth
 
@@ -41,12 +41,12 @@ def create_app(test_config=None):
         return 'Hello!'
 
     # A GET endpoint to get all the blog posts
-    @app.route('/blog_posts', methods=['GET'])
-    def get_all_blog_posts():
-        blog_posts = Blog_Post.query.all()
+    @app.route('/blogs', methods=['GET'])
+    def get_all_blogs():
+        blogs = Blog.query.all()
         return jsonify({
             'success': True,
-            'blogs': [blog.format() for blog in blog_posts]
+            'blogs': [blog.format() for blog in blogs]
         })
 
     # A GET endpoint to get all the users
@@ -62,38 +62,38 @@ def create_app(test_config=None):
     """
         A GET endpoint to get all the blogposts for a specific user. 
     """
-    @app.route('/users/<int:user_id>/blog_posts', methods=['GET'])
+    @app.route('/users/<int:user_id>/blogs', methods=['GET'])
     @requires_auth('get:users')
     def get_all_posts_for_user(user_id):
-        blog_posts = Blog_Post.query.filter(
-            Blog_Post.author_id == user_id).all()
-        if(blog_posts is None or len(blog_posts) == 0):
+        blogs = Blog.query.filter(
+            Blog.author_id == user_id).all()
+        if(blogs is None or len(blogs) == 0):
             abort(404)
 
         return jsonify({
             'success': True,
             'user': user_id,
-            'blogs': [blog.format() for blog in blog_posts],
-            'total_blogs': len(blog_posts)
+            'blogs': [blog.format() for blog in blogs],
+            'total_blogs': len(blogs)
         })
 
     # A GET endpoint to get a specific blog post
-    @app.route('/blog_posts/<int:blog_post_id>', methods=['GET'])
-    def get_blog_post(blog_post_id):
-        blog_post = Blog_Post.query.filter(
-            Blog_Post.id == blog_post_id).one_or_none()
-        if (blog_post is None):
+    @app.route('/blogs/<int:blog_id>', methods=['GET'])
+    def get_blog(blog_id):
+        blog = Blog.query.filter(
+            Blog.id == blog_id).one_or_none()
+        if (blog is None):
             abort(404)
 
         return jsonify({
             'success': True,
-            'blog_post': blog_post.format()
+            'blog': blog.format()
         })
 
     # A POST endpoint used to create new blog posts.
-    @app.route('/blog_posts', methods=['POST'])
-    @requires_auth('post:blog_posts')
-    def create_blog_post():
+    @app.route('/blogs', methods=['POST'])
+    @requires_auth('post:blogs')
+    def create_blog():
         body = get_body(request)
 
         title = body.get('title')
@@ -101,12 +101,12 @@ def create_app(test_config=None):
         author_id = body.get('author_id')
 
         try:
-            new_blog_post = Blog_Post(title, blog_body, author_id)
-            new_blog_post.insert()
+            new_blog = Blog(title, blog_body, author_id)
+            new_blog.insert()
 
             return jsonify({
                 'success': True,
-                'created': new_blog_post.id,
+                'created': new_blog.id,
             })
         except:
             abort(422)
@@ -134,15 +134,15 @@ def create_app(test_config=None):
             abort(422)
 
     # A DELETE endpoint used to delete blog posts
-    @app.route('/blog_posts/<int:blog_id>', methods=['DELETE'])
-    @requires_auth('delete:blog_posts')
-    def delete_blog_post(blog_id):
-        blog_post = Blog_Post.query.filter(Blog_Post.id == blog_id).one_or_none()
-        if(blog_post is None):
+    @app.route('/blogs/<int:blog_id>', methods=['DELETE'])
+    @requires_auth('delete:blogs')
+    def delete_blog(blog_id):
+        blog = Blog.query.filter(Blog.id == blog_id).one_or_none()
+        if(blog is None):
             abort(404)
         
         try:
-            blog_post.delete()
+            blog.delete()
             return jsonify({
                 'success': True,
                 'deleted': blog_id,
@@ -151,11 +151,11 @@ def create_app(test_config=None):
             abort(422)
     
     # A PATCH endpoint used to update blog posts
-    @app.route('/blog_posts/<int:blog_id>', methods=['PATCH'])
-    @requires_auth('patch:blog_posts')
-    def update_blog_post(blog_id):
-        blog_post = Blog_Post.query.filter(Blog_Post.id == blog_id).one_or_none()
-        if(blog_post is None):
+    @app.route('/blogs/<int:blog_id>', methods=['PATCH'])
+    @requires_auth('patch:blogs')
+    def update_blog(blog_id):
+        blog = Blog.query.filter(Blog.id == blog_id).one_or_none()
+        if(blog is None):
             abort(404)
         
         body = get_body(request)
@@ -165,15 +165,15 @@ def create_app(test_config=None):
         
         try:
             if(title is not None):
-                blog_post.title = title
+                blog.title = title
             
             if(blog_body is not None):
-                blog_post.body = blog_body
+                blog.body = blog_body
             
-            blog_post.update()
+            blog.update()
             return jsonify({
                 'success': True,
-                'blog_post': blog_post.format()
+                'blog': blog.format()
             })
         except:
             abort(422)

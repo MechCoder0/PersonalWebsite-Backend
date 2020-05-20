@@ -4,7 +4,7 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
-from models import setup_db, User, Blog_Post
+from models import setup_db, User, Blog
 
 def check_basic_success(self, url, http_method, headers=None):
     return basic_check(self, url, http_method, self.assertTrue, headers=headers)
@@ -56,11 +56,11 @@ class BlogOSphearTestCase(unittest.TestCase):
         }
 
         self.admin_header = {
-           'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijd5T0R4NGZWQ1FaWHlLYVlseFZqaCJ9.eyJpc3MiOiJodHRwczovL2Rldi1mdWxsc3RhY2suYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlOTYwZmQxZGZhYmFlMGM4OTRhODY1MCIsImF1ZCI6ImJsb2dvc3BoZWFyIiwiaWF0IjoxNTg5OTE3ODU1LCJleHAiOjE1ODk5ODk4NTUsImF6cCI6Ik1qRUdSbGhVRGtQYlFRVUI2V2MzOXdpMGlCMHE0bFVaIiwic2NvcGUiOiIiLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6YmxvZ19wb3N0cyIsImdldDp1c2VycyIsInBhdGNoOmJsb2dfcG9zdHMiLCJwb3N0OmJsb2dfcG9zdHMiLCJwb3N0OnVzZXJzIl19.mExeavcdHsp6qrKxWYm6nQ-h-fqZARgGpQpFM6IxAnX1WZRl9pjH0jr6pqUh4-EQm1Uw9_0_wcd_skeA_HgHTwZbRHde8DjvBRHcg0XbXpsq9Jaey8Zj5ozSfk8ferAo3V30M7hXRd0xJSCOUXJbLG96Gf9mOHxeT52A6XmAZtuD1febBiZilMOjUYiZIH5lNFZiywRfOs2PiZaMAEaw2KAEOa0lJnVsy744BM21x31097mKuvk2uCmy-lZPDQ25yJ60szb6o4lKxA_-clcJJmSGsBs42tLXRRB4MRL4DbEES74utavY_g9-YJMHd6vjjZInyt8ABfJGSkc54RmZpQ'
+           'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijd5T0R4NGZWQ1FaWHlLYVlseFZqaCJ9.eyJpc3MiOiJodHRwczovL2Rldi1mdWxsc3RhY2suYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlOTYwZmQxZGZhYmFlMGM4OTRhODY1MCIsImF1ZCI6ImJsb2dvc3BoZWFyIiwiaWF0IjoxNTg5OTc5MzEyLCJleHAiOjE1OTAwNTEzMTIsImF6cCI6Ik1qRUdSbGhVRGtQYlFRVUI2V2MzOXdpMGlCMHE0bFVaIiwic2NvcGUiOiIiLCJwZXJtaXNzaW9ucyI6WyJkZWxldGU6YmxvZ3MiLCJnZXQ6dXNlcnMiLCJwYXRjaDpibG9ncyIsInBvc3Q6YmxvZ3MiLCJwb3N0OnVzZXJzIl19.YJy0P9YBQs4sTMRjHFaOYuNZYGcz3EwHnhGqVf7y3-U3rCuLlOwQJHOi8R6WMp4N0gnnQuFFG0QaTK6QTn5ef4oBvr3MRZOI40h8i8yYGEGDS3jF0XZDQ9rqTUIBaIHm4AqjoNTE3x_PWO0A424H2e-cqMP5HRpg-wKIflt9LBAL8zFE7VkEcDWsL09Z14cgNTLthoS_J6nHq7fTacKfs2HSySP16oIwkLOuE71MTk-4Je_6-7TCEdC6HIEOieJKA5yLfAntvxEfG3AFOw1GLikhEXGy84tNYhNk2wwssy0At5-KiDeo0JXqBpejG-02TF8CYwLIRDwjcRMhs5SsJA'
         }
 
         self.blogger_header = {
-            'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijd5T0R4NGZWQ1FaWHlLYVlseFZqaCJ9.eyJpc3MiOiJodHRwczovL2Rldi1mdWxsc3RhY2suYXV0aDAuY29tLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTEwMjg0MTU3NzQyNjA0NzMyMzQ4IiwiYXVkIjpbImJsb2dvc3BoZWFyIiwiaHR0cHM6Ly9kZXYtZnVsbHN0YWNrLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE1ODk5MTc5MzgsImV4cCI6MTU4OTk4OTkzOCwiYXpwIjoiTWpFR1JsaFVEa1BiUVFVQjZXYzM5d2kwaUIwcTRsVVoiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwicGVybWlzc2lvbnMiOlsicGF0Y2g6YmxvZ19wb3N0cyIsInBvc3Q6YmxvZ19wb3N0cyJdfQ.lUsjl8L0GhmrX4-JMN-KUd1eIi-X8WJix5MO4d_oK3GRCpx9rlbpoaJGPyF78V25nIZQWipd_HQJUT5hx0W_YkQuc8xfUbGEYPa3csMV88w2vu1tVWMd9h2uEmIGlX8rZkWznyEeD0SaRuR89kzXfN3YcsbxSL3vxYBhysRc4wIXyI4Erw344razV3qR-fJlE7Osq0oVW4eNZ9bsn5BCsoLjO_Kb-kr3qHP2aS-wfMNBdKapdijYugj1vrjF6EIIxduRkmxvI3IefZOJl7bOUu-tQmdO9uWzRn3bBzqKqu44AVfuZEWIpKZ9gsLXzGPl36lO67Gz3pGkuYDAZ-HyAg'
+            'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijd5T0R4NGZWQ1FaWHlLYVlseFZqaCJ9.eyJpc3MiOiJodHRwczovL2Rldi1mdWxsc3RhY2suYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlOGUyNzkzMWFmOTcxMGM3Mjc5MjcwNyIsImF1ZCI6ImJsb2dvc3BoZWFyIiwiaWF0IjoxNTg5OTc4OTY5LCJleHAiOjE1OTAwNTA5NjksImF6cCI6Ik1qRUdSbGhVRGtQYlFRVUI2V2MzOXdpMGlCMHE0bFVaIiwic2NvcGUiOiIiLCJwZXJtaXNzaW9ucyI6WyJwYXRjaDpibG9ncyIsInBvc3Q6YmxvZ3MiXX0.EWn0ft8NiisR5klTxkJzJ7CwW_x3yVpQiT0-51HQPmz2ODRak7SMSgDQKfpYMZMlSHOEt0CMRi0vCe8uLn4tDuCzBEmQEzazXi4PTVOeuPAicmEdY9LBZPr3bPkWR8o4qDLrgc14_dh4xhS14nm-GpCqcHHG383ycCF3ysqXfvmAQEOXKpK-2dh78QZTd11-nBF7HigzNncDv4qYL0T9pZ56aZ6HpNIuxq-6BP849bgoWmxXZ-XClXnXLHalKZqB9yg6ufKGHf76DeMrLRPYya4mZlMrvr5KLidIJetgKUqw5UPT3i4GdsKFeq81GNEiuj1QqZrfVOdbPa34LDP5Qg'
         }
     
     def tearDown(self):
@@ -81,48 +81,48 @@ class BlogOSphearTestCase(unittest.TestCase):
     def test_POST_users_fail(self):
         basic_auth_fail(self, '/users', self.client().post, headers=self.blogger_header)
 
-    def test_POST_blog_post(self):
-        res = self.client().post('/blog_posts', json=self.new_blog, headers=self.admin_header)
+    def test_POST_blogs(self):
+        res = self.client().post('/blogs', json=self.new_blog, headers=self.admin_header)
         data = json.loads(res.data)
+        print(data)
         self.assertTrue(data['success'])
 
-    def test_POST_blog_posts_fail(self):
-        basic_auth_fail(self, '/blog_posts', self.client().post)
+    def test_POST_blogs_fail(self):
+        basic_auth_fail(self, '/blogs', self.client().post)
 
-    def test_GET_blog_posts(self):
-        data = check_basic_success(self, '/blog_posts', self.client().get)
+    def test_GET_blogs(self):
+        data = check_basic_success(self, '/blogs', self.client().get)
         print(data)
 
     def test_GET_specific_post(self):
-        check_basic_success(self, '/blog_posts/2', self.client().get)
+        check_basic_success(self, '/blogs/1', self.client().get)
 
     def test_GET_specific_post_fail(self):
-        check_basic_failure(self, '/blog_posts/100000', 404, self.client().get)
+        check_basic_failure(self, '/blogs/100000', 404, self.client().get)
 
     def test_GET_blogs_for_user(self):
-        data = check_basic_success(self, '/users/1/blog_posts', self.client().get, self.admin_header)
+        data = check_basic_success(self, '/users/1/blogs', self.client().get, self.admin_header)
         self.assertEqual(1, data['user'])
     
     def test_GET_blogs_for_user_fail(self):
-        basic_auth_fail(self, '/users/1/blog_posts', self.client().get)
+        basic_auth_fail(self, '/users/1/blogs', self.client().get)
 
-    def test_DELETE_blog_post_fail(self):
-        basic_auth_fail(self, '/blog_posts/1', self.client().delete, headers=self.blogger_header)
-
-    def test_DELETE_blog_post(self):
-        # If testing this multiple times, change the id it deletes.
-        check_basic_success(self, '/blog_posts/1', self.client().delete, headers=self.admin_header)
-
-    def test_PATCH_blog_post(self):
-        # check_basic_success(self, '/blog_posts/42', self.client().patch, headers=self.admin_header)
+    def test_PATCH_blogs(self):
         title = "this is my title"
-        res = self.client().patch('/blog_posts/42', json={'title': title}, headers=self.blogger_header)
+        res = self.client().patch('/blogs/1', json={'title': title}, headers=self.blogger_header)
         data = json.loads(res.data)
         self.assertTrue(data['success'])
-        self.assertEquals(data['blog_post'].get('title'), title)
+        self.assertEquals(data['blog'].get('title'), title)
 
-    def test_PATCH_blog_post_fail(self):
-        basic_auth_fail(self, '/blog_posts/42', self.client().patch)
+    def test_PATCH_blogs_fail(self):
+        basic_auth_fail(self, '/blogs/42', self.client().patch)
+
+    def test_DELETE_blogs_fail(self):
+        basic_auth_fail(self, '/blogs/1', self.client().delete, headers=self.blogger_header)
+
+    def test_DELETE_blogs(self):
+        # If testing this multiple times, change the id it deletes.
+        check_basic_success(self, '/blogs/1', self.client().delete, headers=self.admin_header)
 
 
 # Make the tests conveniently executable

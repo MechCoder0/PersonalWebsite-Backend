@@ -44,8 +44,8 @@ class Basic_Model():
     This is the blog post class. Each blog contains 
     a title, body, and author. 
 """
-class Blog_Post(Basic_Model, db.Model):
-    __tablename__ = 'blog_post'
+class Blog(Basic_Model, db.Model):
+    __tablename__ = 'blog'
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
@@ -75,7 +75,7 @@ class User(Basic_Model, db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     email= Column(String, nullable=False)
-    blog_posts = db.relationship('Blog_Post', backref='user', lazy=True)
+    blogs = db.relationship('Blog', backref='user', lazy=True)
 
     def __init__(self, name, email):
         self.name = name
@@ -86,6 +86,6 @@ class User(Basic_Model, db.Model):
             'id': self.id,
             'name': self.name,
             'email':self.email,
-            'blog_posts': [blog.format() for blog in self.blog_posts]
+            'blogs': [blog.format() for blog in self.blogs]
         }
 
