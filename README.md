@@ -14,7 +14,9 @@ This project was started because of the Udacity Full Stack Nano degree program. 
 The code adhears to the Pep8 style guide
 
 ## Requirements Setup
-In order to run this locally, run 
+In order to run this locally, run
+python3 -m venv env
+source env/Scripts/activate
 pip install -r requirements.txt
 
 This will install all the needed dependancies from the requirements
